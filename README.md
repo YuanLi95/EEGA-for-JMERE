@@ -3,4 +3,4 @@ This is code for Joint Multimodal Entity-Relation Extraction Based on Edge-enhan
 
 
 
-we will release dataset after the submitted the final version to AAAI 2023.
+About the datasets of JMERE, please contact me: seyuanli@mail.scut.edu.cn
