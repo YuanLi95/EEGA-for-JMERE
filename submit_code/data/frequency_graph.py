@@ -12,7 +12,7 @@ import pickle
 import collections
 from collections import Counter
 import  json
-
+from nltk.corpus import stopwords
 frequence_dict={1:1,2:1,3:2,4:2,5:3,6:3,7:4,8:4,9:5,10:5,11:6,12:6,13:7,14:7,15:7}
 def tokenize(text):
     text=text.lower()
@@ -21,25 +21,25 @@ def tokenize(text):
     # document = token_nize_for_tokenize(text)
     return  " ".join(document)
 
-# def stopword():
-#     #得到bert分词之后的停止词
-#     stop_words = stopwords.words('english')
-#     for w in ['!', ',', '.', '?', '-s', '-ly', '</s>', 's','(',')','-','[',']',
-#               '{','}',';',':','\'','"','1','2','3','4','5','6','7','8','9','0',
-#     '\\','<','>','.','/','@','+','=','#','$','%','^','&','*','~','|']:
-#
-#         stop_words.append(w)
-#     text = " ".join(stop_words)
-#
-#     word_piece_id = bert_tokenizer(text, is_split_into_words=True, padding=True, add_special_tokens=False)
-#     # print(word_piece_id["input_ids"])
-#     stop_words_for_bert = bert_tokenizer.convert_ids_to_tokens(word_piece_id["input_ids"])
-#     stop_words_for_bert = list(set(stop_words_for_bert))
-#
-#
-#     return stop_words_for_bert
+def stopword():
+    #得到bert分词之后的停止词
+    stop_words = stopwords.words('english')
+    for w in ['!', ',', '.', '?', '-s', '-ly', '</s>', 's','(',')','-','[',']',
+              '{','}',';',':','\'','"','1','2','3','4','5','6','7','8','9','0',
+    '\\','<','>','.','/','@','+','=','#','$','%','^','&','*','~','|']:
 
-# punc = stopword()
+        stop_words.append(w)
+    text = " ".join(stop_words)
+
+    word_piece_id = bert_tokenizer(text, is_split_into_words=True, padding=True, add_special_tokens=False)
+    # print(word_piece_id["input_ids"])
+    stop_words_for_bert = bert_tokenizer.convert_ids_to_tokens(word_piece_id["input_ids"])
+    stop_words_for_bert = list(set(stop_words_for_bert))
+
+
+    return stop_words_for_bert
+
+punc = stopword()
 
 def dataProcess(directory, window):
     total_token = 0
@@ -138,13 +138,12 @@ def process_single(fname,pmi_matrix):
     for i in range(0, len(lines)):
         sentence = lines[i]['token']
         sentence = " ".join(sentence)
-        sentence = "So happy NBA stars Thompson, Curry, and Green are around the O’Brien Trophy"
         input_text = tokenize(sentence)
         word_piece_id = bert_tokenizer(input_text, is_split_into_words=True, padding=True, add_special_tokens=False)
         word_pieces = bert_tokenizer.convert_ids_to_tokens(word_piece_id["input_ids"])
-        print(word_pieces)
+        # print(word_pieces)
         seq_len = len(word_pieces)
-        print(len(word_pieces))
+        # print(len(word_pieces))
         adj_matrix = np.zeros((seq_len, seq_len)).astype('float32')
         new_adj_matrix_all =np.zeros((seq_len+2, seq_len+2)).astype('int')
         for j in range(seq_len - 1):
@@ -172,9 +171,9 @@ def process_single(fname,pmi_matrix):
         new_adj_matrix = np.where(adj_matrix <= 0, 0.0, adj_matrix)
         new_adj_matrix = np.divide(new_adj_matrix, 2)
         new_adj_matrix = np.ceil(new_adj_matrix)
-        print(new_adj_matrix.shape)
-        print(new_adj_matrix)
-        exit()
+        # print(new_adj_matrix.shape)
+        # print(new_adj_matrix)
+        # exit()
 
         new_adj_matrix_all[1:-1,1:-1]=new_adj_matrix
         idx2graph[i] = new_adj_matrix_all
